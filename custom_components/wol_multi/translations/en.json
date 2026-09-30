@@ -1,0 +1,63 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a Wake-on-LAN device",
+        "description": "Each entry creates one switch that wakes the device and tracks whether it is awake.",
+        "data": {
+          "name": "Device name",
+          "mac": "MAC address",
+          "host": "IP address or hostname (used for liveness checks)",
+          "broadcast_address": "Broadcast address (leave empty to auto-derive from host)",
+          "broadcast_port": "Broadcast port",
+          "scan_interval": "Liveness check interval (seconds)",
+          "turn_off_script": "Shutdown script (optional, runs when the switch is turned off)"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "Invalid MAC address (use e.g. AA:BB:CC:DD:EE:FF or AA-BB-CC-DD-EE-FF).",
+      "invalid_host": "Could not resolve the IP address or hostname."
+    },
+    "abort": {
+      "already_configured": "A device with this MAC address already exists."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "WoL device options",
+        "data": {
+          "host": "IP address or hostname (used for liveness checks)",
+          "broadcast_address": "Broadcast address (leave empty to auto-derive from host)",
+          "broadcast_port": "Broadcast port",
+          "scan_interval": "Liveness check interval (seconds)",
+          "turn_off_script": "Shutdown script (optional, runs when the switch is turned off)"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "Could not resolve the IP address or hostname."
+    }
+  },
+  "services": {
+    "send_magic_packet": {
+      "name": "Send magic packet",
+      "description": "Sends a Wake-on-LAN magic packet to wake a device.",
+      "fields": {
+        "mac": {
+          "name": "MAC address",
+          "description": "The MAC address of the device to wake."
+        },
+        "broadcast_address": {
+          "name": "Broadcast address",
+          "description": "Broadcast address to send the packet to. Defaults to 255.255.255.255."
+        },
+        "broadcast_port": {
+          "name": "Broadcast port",
+          "description": "UDP port to send the packet to. Defaults to 9."
+        }
+      }
+    }
+  }
+}

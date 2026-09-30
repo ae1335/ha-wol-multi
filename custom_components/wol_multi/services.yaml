@@ -1,0 +1,31 @@
+send_magic_packet:
+  name: Send magic packet
+  description: >-
+    Send a Wake-on-LAN magic packet to wake a device, independent of any
+    configured switch entity.
+  fields:
+    mac:
+      name: MAC address
+      description: The MAC address of the device to wake.
+      required: true
+      example: "AA:BB:CC:DD:EE:FF"
+      selector:
+        text:
+    broadcast_address:
+      name: Broadcast address
+      description: >-
+        Broadcast address to send the packet to. Defaults to 255.255.255.255.
+      required: false
+      example: "192.168.2.255"
+      selector:
+        text:
+    broadcast_port:
+      name: Broadcast port
+      description: UDP port to send the packet to. Defaults to 9.
+      required: false
+      example: 9
+      selector:
+        number:
+          min: 1
+          max: 65535
+          mode: box

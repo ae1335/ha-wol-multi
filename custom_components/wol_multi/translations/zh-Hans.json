@@ -1,0 +1,63 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "添加网络唤醒设备",
+        "description": "每个配置项创建一个开关实体：打开即发送魔术包唤醒设备，并持续检测设备是否在线。",
+        "data": {
+          "name": "设备名称",
+          "mac": "MAC 地址",
+          "host": "IP 地址或主机名（用于在线状态检测）",
+          "broadcast_address": "广播地址（留空则根据 host 自动推导 /24 广播）",
+          "broadcast_port": "广播端口",
+          "scan_interval": "在线检测间隔（秒）",
+          "turn_off_script": "关机脚本（可选，关闭开关时触发）"
+        }
+      }
+    },
+    "error": {
+      "invalid_mac": "MAC 地址格式无效（如 AA:BB:CC:DD:EE:FF 或 AA-BB-CC-DD-EE-FF）。",
+      "invalid_host": "无法解析该 IP 地址或主机名。"
+    },
+    "abort": {
+      "already_configured": "该 MAC 地址的设备已存在。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "WoL 设备选项",
+        "data": {
+          "host": "IP 地址或主机名（用于在线状态检测）",
+          "broadcast_address": "广播地址（留空则根据 host 自动推导 /24 广播）",
+          "broadcast_port": "广播端口",
+          "scan_interval": "在线检测间隔（秒）",
+          "turn_off_script": "关机脚本（可选，关闭开关时触发）"
+        }
+      }
+    },
+    "error": {
+      "invalid_host": "无法解析该 IP 地址或主机名。"
+    }
+  },
+  "services": {
+    "send_magic_packet": {
+      "name": "发送魔术包",
+      "description": "发送 Wake-on-LAN 魔术包唤醒设备，无需依赖已配置的开关实体。",
+      "fields": {
+        "mac": {
+          "name": "MAC 地址",
+          "description": "要唤醒设备的 MAC 地址。"
+        },
+        "broadcast_address": {
+          "name": "广播地址",
+          "description": "魔术包发送目标广播地址，默认 255.255.255.255。"
+        },
+        "broadcast_port": {
+          "name": "广播端口",
+          "description": "发送魔术包的 UDP 端口，默认 9。"
+        }
+      }
+    }
+  }
+}
