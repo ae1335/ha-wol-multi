@@ -32,6 +32,9 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.SWITCH]
 
+# 仅支持 UI（配置项）配置，无 YAML 参数；声明空 schema 以满足 hassfest 规范
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 SERVICE_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_MAC): cv.string,
