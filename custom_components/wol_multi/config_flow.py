@@ -1,4 +1,4 @@
-"""Config flow to set up WoL Multi devices."""
+"""WoL Multi 设备配置流。"""
 from __future__ import annotations
 
 import socket
@@ -32,7 +32,7 @@ from .util import normalize_mac, resolve_option
 
 
 def _can_resolve(host: str) -> bool:
-    """Return True when the host can be resolved via DNS/hosts."""
+    """测试主机名 / IP 能否被 DNS 或 hosts 解析。"""
     try:
         socket.gethostbyname(host)
     except OSError:
@@ -70,14 +70,14 @@ USER_SCHEMA = vol.Schema(
 
 
 class WolMultiConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle the WoL Multi config flow."""
+    """处理 WoL Multi 配置流。"""
 
     VERSION = 1
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
-        """Handle the initial step: one device per entry."""
+        """处理初始步骤：每个配置项对应一台设备。"""
         errors: dict[str, str] = {}
         mac = ""
         if user_input is not None:
@@ -105,17 +105,17 @@ class WolMultiConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
     ) -> WolMultiOptionsFlow:
-        """Create the options flow handler."""
+        """创建选项流处理器。"""
         return WolMultiOptionsFlow()
 
 
 class WolMultiOptionsFlow(config_entries.OptionsFlow):
-    """Handle options for an existing WoL Multi device."""
+    """管理既有 WoL Multi 设备的选项。"""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
-        """Manage the device options (name and MAC are fixed at creation)."""
+        """管理设备选项（名称与 MAC 在创建时固定，不可修改）。"""
         errors: dict[str, str] = {}
         entry = self.config_entry
         if user_input is not None:
@@ -124,9 +124,8 @@ class WolMultiOptionsFlow(config_entries.OptionsFlow):
             ):
                 errors[CONF_HOST] = "invalid_host"
             else:
-                # The selector omits the key when left empty; keep the
-                # previously configured script so users cannot lose it by
-                # accident (clear it by re-adding the device if ever needed).
+                # 选择器留空时会省略该键；此时保留原有关机脚本，避免误清空
+                # （如确需清空，可删除设备后重新添加）
                 if CONF_TURN_OFF_SCRIPT not in user_input:
                     previous = resolve_option(entry, CONF_TURN_OFF_SCRIPT)
                     if previous:

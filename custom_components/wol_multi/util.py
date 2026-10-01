@@ -1,4 +1,4 @@
-"""Helper utilities for WoL Multi."""
+"""WoL Multi 工具函数集。"""
 from __future__ import annotations
 
 import asyncio
@@ -19,9 +19,9 @@ _REPEAT_DELAY = 0.05
 
 
 def normalize_mac(mac: str) -> str:
-    """Normalize a MAC address to uppercase colon-separated form.
+    """将 MAC 地址规范化为大写冒号分隔格式。
 
-    Raises ValueError when the input is not a valid MAC address.
+    输入不是合法 MAC 时抛出 ValueError。
     """
     cleaned = mac.strip().replace(":", "").replace("-", "").replace(".", "")
     if not _HEX_RE.match(cleaned):
@@ -30,7 +30,7 @@ def normalize_mac(mac: str) -> str:
 
 
 def is_valid_mac(mac: str) -> bool:
-    """Return True when the MAC address is well-formed."""
+    """判断 MAC 地址格式是否合法。"""
     try:
         normalize_mac(mac)
     except ValueError:
@@ -39,14 +39,14 @@ def is_valid_mac(mac: str) -> bool:
 
 
 def build_magic_packet(mac: str) -> bytes:
-    """Build a WoL magic packet: 6 x 0xFF followed by the MAC repeated 16 times."""
+    """构造 WoL 魔术包：6 个 0xFF 后跟重复 16 次的目标 MAC。"""
     return _MAGIC_HEADER + bytes.fromhex(mac.replace(":", "")) * 16
 
 
 def derive_broadcast_address(host: str) -> str | None:
-    """Derive the /24 directed broadcast address from an IPv4 literal.
+    """从 IPv4 字面量推导 /24 定向广播地址。
 
-    Returns None when the host is not a valid IPv4 address (e.g. a hostname).
+    host 不是合法 IPv4 地址（例如主机名）时返回 None。
     """
     try:
         network = ipaddress.ip_network(f"{host}/24", strict=False)
@@ -60,7 +60,7 @@ async def async_send_magic_packet(
     broadcast_address: str = DEFAULT_BROADCAST_ADDRESS,
     broadcast_port: int = 9,
 ) -> None:
-    """Send a WoL magic packet via UDP broadcast, repeated for reliability."""
+    """通过 UDP 广播发送 WoL 魔术包，连发多次以对抗丢包。"""
     packet = build_magic_packet(mac)
     target = (broadcast_address, int(broadcast_port))
 
@@ -75,7 +75,7 @@ async def async_send_magic_packet(
 
 
 def resolve_option(entry: ConfigEntry, key: str, default: Any = None) -> Any:
-    """Resolve a value with entry.options taking precedence over entry.data."""
+    """读取配置值：entry.options 优先于 entry.data。"""
     if key in entry.options:
         return entry.options[key]
     if key in entry.data:

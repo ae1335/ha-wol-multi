@@ -1,4 +1,4 @@
-"""Constants for the WoL Multi integration."""
+"""WoL Multi 集成常量定义。"""
 from __future__ import annotations
 
 DOMAIN = "wol_multi"

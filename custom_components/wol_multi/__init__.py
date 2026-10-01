@@ -1,8 +1,8 @@
-"""The WoL Multi integration.
+"""WoL Multi 集成入口。
 
-Multi-device Wake-on-LAN with UI configuration and ICMP-based state tracking.
-One config entry per device creates one switch entity: turning it on sends a
-magic packet, and its state reflects real ping-based liveness.
+多设备网络唤醒：UI 配置 + 基于 ICMP 的真实状态跟踪。
+每台设备一个配置项，对应一个开关实体——打开即发魔术包唤醒，
+开关状态反映真实 ping 探测结果。
 """
 from __future__ import annotations
 
@@ -44,15 +44,15 @@ SERVICE_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
-    """Set up WoL Multi (UI-configured; YAML is not used)."""
+    """初始化 WoL Multi（仅支持 UI 配置，不使用 YAML）。"""
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Set up WoL Multi from a config entry."""
+    """从配置项初始化 WoL Multi。"""
     domain_data = hass.data.setdefault(DOMAIN, {})
 
-    # The domain-level service is registered once and survives entry reloads.
+    # 域级服务只注册一次，条目重载后依然可用
     if not domain_data.get("_services_registered"):
 
         async def _async_handle_send(call: ServiceCall) -> None:
@@ -60,7 +60,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 mac = normalize_mac(call.data[ATTR_MAC])
             except ValueError as err:
                 raise HomeAssistantError(
-                    f"Invalid MAC address: {call.data[ATTR_MAC]}"
+                    f"无效的 MAC 地址：{call.data[ATTR_MAC]}"
                 ) from err
             broadcast = (
                 call.data.get(CONF_BROADCAST_ADDRESS) or DEFAULT_BROADCAST_ADDRESS
@@ -86,12 +86,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
-    """Reload the entry when its options change."""
+    """选项变更时重载该配置项。"""
     await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a config entry."""
+    """卸载一个配置项。"""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id, None)

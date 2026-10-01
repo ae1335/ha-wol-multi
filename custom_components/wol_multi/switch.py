@@ -1,4 +1,4 @@
-"""Switch platform for WoL Multi."""
+"""WoL Multi 开关平台。"""
 from __future__ import annotations
 
 from typing import Any
@@ -33,13 +33,13 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Set up the WoL Multi switch from a config entry."""
+    """从配置项初始化 WoL Multi 开关实体。"""
     coordinator: WolMultiCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([WolMultiSwitch(coordinator, entry)])
 
 
 class WolMultiSwitch(CoordinatorEntity[WolMultiCoordinator], SwitchEntity):
-    """A switch that wakes a device via WoL and tracks liveness via ping."""
+    """通过 WoL 唤醒设备、并以 ping 跟踪在线状态的开关。"""
 
     _attr_has_entity_name = True
     _attr_name = None
@@ -54,11 +54,11 @@ class WolMultiSwitch(CoordinatorEntity[WolMultiCoordinator], SwitchEntity):
             name=entry.data[CONF_NAME],
             connections={(CONNECTION_NETWORK_MAC, mac.lower())},
             manufacturer="WoL Multi",
-            model="Wake-on-LAN Device",
+            model="网络唤醒设备",
         )
 
     def _current_mac(self) -> str:
-        """Return the normalized MAC address."""
+        """返回规范化后的 MAC 地址。"""
         raw = resolve_option(self._entry, CONF_MAC, "")
         if not raw:
             return ""
@@ -66,19 +66,19 @@ class WolMultiSwitch(CoordinatorEntity[WolMultiCoordinator], SwitchEntity):
 
     @property
     def is_on(self) -> bool | None:
-        """Return True when the last ping reported the device awake."""
+        """上次 ping 结果显示设备在线时返回 True。"""
         return bool(self.coordinator.data)
 
     @property
     def extra_state_attributes(self) -> dict[str, str]:
-        """Expose addressing details for debugging."""
+        """暴露寻址信息（MAC / host），便于排障。"""
         return {
             "mac": self._current_mac(),
             "host": resolve_option(self._entry, CONF_HOST, ""),
         }
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Send a magic packet to wake the device."""
+        """发送魔术包唤醒设备。"""
         host = resolve_option(self._entry, CONF_HOST, "")
         broadcast = (
             resolve_option(self._entry, CONF_BROADCAST_ADDRESS, "")
@@ -91,7 +91,7 @@ class WolMultiSwitch(CoordinatorEntity[WolMultiCoordinator], SwitchEntity):
         await async_send_magic_packet(self._current_mac(), broadcast, port)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Run the configured shutdown script (if any)."""
+        """执行已配置的关机脚本（如有）。"""
         script = resolve_option(self._entry, CONF_TURN_OFF_SCRIPT)
         if script:
             await self.hass.services.async_call(
